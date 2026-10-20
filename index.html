@@ -1,18 +1,80 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="day">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ascii sharks</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@600&display=swap" rel="stylesheet" />
-    <style>
-      html, body { margin: 0; height: 100%; background: #000; }
-      canvas { display: block; width: 100vw; height: 100vh; font-family: "Geist Mono", ui-monospace, Menlo, monospace; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#e7e8d9" />
+    <meta name="description" content="A quiet, interactive koi pond. Slow swimming, gentle ripples, and original harp and water sounds. Take a little time for yourself." />
+    <title>Stillwater — a little room to breathe</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
-    <canvas aria-hidden="true"></canvas>
+    <canvas id="pond" aria-hidden="true"></canvas>
+    <div class="page-wash" aria-hidden="true"></div>
+    <header class="page-header interface">
+      <a class="brand" href="./" aria-label="Stillwater home">
+        <svg class="brand-mark" width="37" height="37" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M29 9C20 1 7 10 9 22c1 7 7 10 13 9M12 31c9 8 22-1 20-13-1-7-7-10-13-9" stroke="currentColor" stroke-width="1.4"/><path d="m29 9-6-1 3 5M12 31l6 1-3-5" stroke="currentColor" stroke-width="1.4"/><circle cx="21" cy="20" r="1" fill="currentColor"/></svg>
+        <span>stillwater<span class="brand-caption">A LITTLE ROOM TO BREATHE</span></span>
+      </a>
+      <button id="embed-open" class="text-button">Use this background <span aria-hidden="true">↗</span></button>
+    </header>
+    <main class="intro interface">
+      <p class="eyebrow"><span class="red-dot" aria-hidden="true"></span> THE KOI POND</p>
+      <h1>Let the world<br />wait a little.</h1>
+      <p class="intro-copy">A few wandering koi. A softer pace.<br />Nothing here needs to be done.</p>
+      <span class="intro-rule" aria-hidden="true"></span>
+      <p class="pond-hint">Move slowly. Touch the water.</p>
+    </main>
+    <div class="controls-area interface">
+      <p class="sound-invitation" id="sound-invitation">a little quieter with sound <span aria-hidden="true">↘</span></p>
+      <section class="control-bar" aria-label="Pond controls">
+        <button id="sound-toggle" class="sound-button" aria-pressed="false" aria-label="Enable harp and water sounds">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path class="sound-waves" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path class="sound-mute" d="m16 10 4 4m0-4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span id="sound-label">Enable sound</span>
+        </button>
+        <div class="volume-control"><label class="sr-only" for="volume">Sound volume</label><input type="range" id="volume" min="0" max="100" value="40" aria-valuetext="40 percent" /></div>
+        <span class="control-divider" aria-hidden="true"></span>
+        <button id="pause-toggle" class="icon-button" aria-label="Pause swimming" aria-pressed="false" title="Pause swimming"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path class="pause-symbol" d="M7 4v12M13 4v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="play-symbol" d="m7 4 9 6-9 6V4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button>
+        <button id="settings-open" class="icon-button" aria-label="Pond settings" title="Pond settings"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4v16M12 4v16M19 4v16" stroke="currentColor" stroke-width="1.3"/><path d="M2 8h6M9 16h6M16 9h6" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg></button>
+      </section>
+      <p class="sound-caption" id="sound-caption">ORIGINAL HARP & SOFT WATER</p>
+      <p class="status-message" id="status" role="status" aria-live="polite"></p>
+    </div>
+    <footer class="page-footer interface">
+      <p><span class="status-dot" aria-hidden="true"></span><span id="pond-state">7 koi, taking their time</span></p>
+      <button id="quiet-view" class="text-button">Just the pond <span aria-hidden="true">⤢</span></button>
+    </footer>
+    <button id="show-controls" class="restore-button" hidden>Show controls</button>
+    <dialog id="settings-dialog" aria-labelledby="settings-title">
+      <div class="dialog-top"><p class="eyebrow">YOUR LITTLE CORNER</p><button class="icon-button dialog-close" aria-label="Close settings">×</button></div>
+      <h2 id="settings-title">Settle in.</h2>
+      <p class="dialog-description">Make the pond feel a little more like you.</p>
+      <fieldset><legend>Light on the water</legend><div class="theme-options"><label><input type="radio" name="theme" value="day" checked /><span><span class="theme-swatch day-swatch"></span>Daylight</span></label><label><input type="radio" name="theme" value="dusk" /><span><span class="theme-swatch dusk-swatch"></span>Dusk</span></label></div></fieldset>
+      <div class="setting-row"><label for="koi-count">Koi in the pond</label><select id="koi-count"><option value="3">3 koi</option><option value="5">5 koi</option><option value="7" selected>7 koi</option><option value="9">9 koi</option><option value="12">12 koi</option></select></div>
+      <fieldset class="sound-layers"><legend>What you hear</legend><label><span>Gentle harp<span class="setting-detail">Slow, original plucked notes</span></span><input id="harp-layer" type="checkbox" checked /></label><label><span>Soft water<span class="setting-detail">A quiet, continuous murmur</span></span><input id="water-layer" type="checkbox" checked /></label></fieldset>
+      <p class="dialog-footnote">Sound starts only when you enable it.<br />The pond rests when you leave this tab.</p>
+    </dialog>
+    <dialog id="embed-dialog" aria-labelledby="embed-title">
+      <div class="dialog-top"><p class="eyebrow">TAKE A LITTLE CALM WITH YOU</p><button class="icon-button dialog-close" aria-label="Close embed instructions">×</button></div>
+      <h2 id="embed-title">A pond on your page.</h2>
+      <p class="dialog-description">Copy the built files into your website. Add a canvas, then let the koi wander behind your content.</p>
+      <pre><code id="embed-code">&lt;canvas id="koi" aria-hidden="true"&gt;&lt;/canvas&gt;
+&lt;style&gt;
+  #koi { position: fixed; inset: 0;
+    width: 100%; height: 100%; z-index: -1; }
+  body { isolation: isolate; }
+&lt;/style&gt;
+&lt;script type="module"&gt;
+  import { KoiPond } from './stillwater.js';
+  const pond = new KoiPond(
+    document.querySelector('#koi'),
+    { count: 7, interactive: false }
+  );
+  // Call pond.destroy() when unmounting.
+&lt;/script&gt;</code></pre>
+      <button id="copy-embed" class="primary-button">Copy embed code <span aria-hidden="true">↗</span></button>
+      <p class="dialog-footnote">No fonts, tracking, or runtime dependencies.<br />See README.md for container sizing and opt-in audio.</p>
+    </dialog>
     <script type="module" src="/demo.ts"></script>
   </body>
 </html>
