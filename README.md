@@ -25,7 +25,9 @@ The production demo is in `dist/`. The build also creates two reusable, dependen
 - `dist/stillwater.js` — ES module exporting `KoiPond` and `PondAudio`.
 - `dist/stillwater.global.js` — classic script exposing `window.Stillwater`.
 
-Serve these over HTTP(S), rather than opening HTML through `file://`. Deploy the production files, rather than the development server. The site and embed use no external fonts, media, tracking, or network requests at runtime.
+For an immediate offline preview, open `dist/standalone.html` directly in your browser. It contains the complete demo, styles, scripts, and favicon in one file. The module bundles below still need HTTP(S).
+
+Serve `index.html` and the module bundles over HTTP(S). Deploy the production files, rather than the development server. The site and embed use no external fonts, media, tracking, or network requests at runtime.
 
 ## Put a pond behind your webpage
 
